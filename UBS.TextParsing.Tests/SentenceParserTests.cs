@@ -48,7 +48,7 @@ namespace UBS.TextParsing.Tests
                     {"line", 1},
                 }),
 
-            new Tuple<string[], Dictionary<string, int>>(new [] {"mendel", "showed", "showed", "this", "in", "in", "in", "several", "ways", "for", "example", "by", "a", "back", "cross"},
+            new Tuple<string[], Dictionary<string, int>>(new [] {"mendel", "SHOWED", "showed", "this", "in", "IN", "in", "several", "ways", "for", "example", "by", "a", "back", "cross"},
                 new Dictionary<string, int> 
                 {
                    {"mendel", 1},

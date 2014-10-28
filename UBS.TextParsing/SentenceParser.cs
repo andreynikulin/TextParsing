@@ -17,10 +17,10 @@ namespace UBS.TextParsing
         {
             Guard.NotNullOrEmpty(() => sentence, sentence);
 
-            var words = _splitter.SplitIntoWords(sentence.ToLower());
+            var words = _splitter.SplitIntoWords(sentence);
 
             var wordsCounts = from word in words
-                group word by word
+                group word by word.ToLower()
                 into g
                 select new {Word = g.Key, Count = g.Count()};
             
