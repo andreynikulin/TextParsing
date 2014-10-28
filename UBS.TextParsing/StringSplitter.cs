@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using UBS.TextParsing.Interfaces;
 
 namespace UBS.TextParsing
 {
-    public static class StringSplitterExtensions
+    public class StringSplitter : IStringSplitter
     {
-        public static IEnumerable<string> SplitIntoWords(this string str)
+        public IEnumerable<string> SplitIntoWords(string sentence)
         {
-            Guard.NotNull(() => str, str);
+            Guard.NotNull(() => sentence, sentence);
 
             var stringList = new List<string>();
 
             var currentWordSb = new StringBuilder();
 
-            foreach (var chr in str)
+            foreach (var chr in sentence)
             {
                 if (Char.IsPunctuation(chr) || Char.IsSeparator(chr) || Char.IsWhiteSpace(chr))
                 {
@@ -32,7 +33,7 @@ namespace UBS.TextParsing
             return stringList;
         }
 
-        private static void AddToList(StringBuilder stringBuilder, ICollection<string> collection)
+        private void AddToList(StringBuilder stringBuilder, ICollection<string> collection)
         {
             var word = stringBuilder.ToString();
             if(!string.IsNullOrEmpty(word))

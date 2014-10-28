@@ -1,15 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UBS.TextParsing.Interfaces;
 
 namespace UBS.TextParsing
 {
     public class SentenceParser
     {
+        private IStringSplitter _splitter;
+
+        public SentenceParser(IStringSplitter splitter)
+        {
+            _splitter = splitter;
+        }
+
         public IDictionary<string, int> Parse(string sentence)
         {
             Guard.NotNullOrEmpty(() => sentence, sentence);
 
-            var words = sentence.ToLower().SplitIntoWords();
+            var words = _splitter.SplitIntoWords(sentence.ToLower());
 
             var wordsCounts = from word in words
                 group word by word

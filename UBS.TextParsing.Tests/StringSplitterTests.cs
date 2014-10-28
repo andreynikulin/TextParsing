@@ -78,7 +78,9 @@ namespace UBS.TextParsing.Tests
         [Test]
         public void SplitIntoWords_EmptyStringPassed_ReturnsZeroStrings()
         {
-            var words = StringSplitterExtensions.SplitIntoWords(string.Empty);
+            var splitter = new StringSplitter();
+
+            var words = splitter.SplitIntoWords(string.Empty);
 
             CollectionAssert.AreEquivalent(new string[]{}, words);
         }
@@ -86,13 +88,17 @@ namespace UBS.TextParsing.Tests
         [Test]
         public void SplitIntoWords_NullPassed_ThrowsArgumentNullException()
         {
-            Assert.Throws<ArgumentNullException>( () => StringSplitterExtensions.SplitIntoWords(null));
+            var splitter = new StringSplitter();
+
+            Assert.Throws<ArgumentNullException>(() => splitter.SplitIntoWords(null));
         }
 
         [Test, TestCaseSource("_testCases")]
         public void SplitIntoWords_ArbitrarySentencePassed_ReturnsWords(Tuple<string, List<string>> testCase)
         {
-            var words = StringSplitterExtensions.SplitIntoWords(testCase.Item1);
+            var splitter = new StringSplitter();
+
+            var words = splitter.SplitIntoWords(testCase.Item1);
 
             CollectionAssert.AreEquivalent(testCase.Item2, words);
         }

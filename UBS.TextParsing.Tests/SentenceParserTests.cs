@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Rhino.Mocks;
+using UBS.TextParsing.Interfaces;
 
 namespace UBS.TextParsing.Tests
 {
     [TestFixture]
     public class SentenceParserTests
     {
-        private readonly Tuple<string, Dictionary<string, int>>[] _testCases =
+        private readonly Tuple<string[], Dictionary<string, int>>[] _testCases =
         {
-            new Tuple<string, Dictionary<string, int>>("This is a statement, and so is this.",
+            new Tuple<string[], Dictionary<string, int>>(new []{ "this", "is", "a", "statement", "and", "so","is", "this"},
                 new Dictionary<string, int> 
                 {
                    {"this", 2},
@@ -20,7 +22,7 @@ namespace UBS.TextParsing.Tests
                     {"so", 1},
                 }),
 
-            new Tuple<string, Dictionary<string, int>>("This is second statement,this time with no space!",
+            new Tuple<string[], Dictionary<string, int>>(new []{ "this","is", "second", "statement", "this", "time", "with", "no", "space"},
                 new Dictionary<string, int> 
                 {
                    {"this", 2},
@@ -33,7 +35,7 @@ namespace UBS.TextParsing.Tests
                     {"space", 1},
                 }),
 
-            new Tuple<string, Dictionary<string, int>>("Is this another\nstatement,\rnow with new line?!",
+            new Tuple<string[], Dictionary<string, int>>(new []{"is", "this", "another", "statement", "now", "with", "new", "line"},
                 new Dictionary<string, int> 
                 {
                    {"this", 1},
@@ -46,7 +48,7 @@ namespace UBS.TextParsing.Tests
                     {"line", 1},
                 }),
 
-            new Tuple<string, Dictionary<string, int>>("Mendel;showed showed! this in in in several\\ ways: for/ example, by a back-cross.",
+            new Tuple<string[], Dictionary<string, int>>(new [] {"mendel", "showed", "showed", "this", "in", "in", "in", "several", "ways", "for", "example", "by", "a", "back", "cross"},
                 new Dictionary<string, int> 
                 {
                    {"mendel", 1},
@@ -67,7 +69,8 @@ namespace UBS.TextParsing.Tests
         [Test]
         public void Parse_EmptyStringAsSentencePassed_ThrowsArgumentException()
         {
-            var sp = new SentenceParser();
+            var splitterStub = MockRepository.GenerateStub<IStringSplitter>();
+            var sp = new SentenceParser(splitterStub);
 
             Assert.Throws<ArgumentException>(() => sp.Parse(string.Empty));
         }
@@ -75,17 +78,22 @@ namespace UBS.TextParsing.Tests
         [Test]
         public void Parse_NullAsSentencePassed_ThrowsArgumentNullException()
         {
-            var sp = new SentenceParser();
+            var splitterStub = MockRepository.GenerateStub<IStringSplitter>();
+            var sp = new SentenceParser(splitterStub);
 
             Assert.Throws<ArgumentNullException>(() => sp.Parse(null));
         }
 
         [Test, TestCaseSource("_testCases")]
-        public void Parse_ArbitrarySentencePassed_ReturnsWordsWithCount(Tuple<string, Dictionary<string, int>> testCase)
+        public void Parse_ArbitrarySentencePassed_ReturnsWordsWithCount(Tuple<string[], Dictionary<string, int>> testCase)
         {
-            var sp = new SentenceParser();
+            var splitterStub = MockRepository.GenerateStub<IStringSplitter>();
 
-            var actualWordsCounts = sp.Parse(testCase.Item1);
+            splitterStub.Stub(t => t.SplitIntoWords(Arg<string>.Is.Anything)).Return(testCase.Item1);
+
+            var sp = new SentenceParser(splitterStub);
+
+            var actualWordsCounts = sp.Parse("SOME DUMMY STRING");
 
             CollectionAssert.AreEquivalent(testCase.Item2, actualWordsCounts);
         }
